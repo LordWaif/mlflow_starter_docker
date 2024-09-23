@@ -92,8 +92,8 @@ with mlflow.start_run(run_name="iris_classification_run") as run:
     plt.tight_layout()
     
     # Salvar e logar o gráfico
-    plt.savefig("feature_importance.png")
-    mlflow.log_artifact("feature_importance.png")
+    plt.savefig("examples/feature_importance.png")
+    mlflow.log_artifact("examples/feature_importance.png")
     
     print(f"Accuracy: {accuracy:.4f}")
     print(f"Precision: {precision:.4f}")
