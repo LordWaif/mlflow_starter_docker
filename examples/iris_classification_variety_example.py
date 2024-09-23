@@ -1,6 +1,6 @@
 import os
 import mlflow.sklearn
-from examples.mlflow_starter import client, mlflow
+from mlflow_starter import client, mlflow
 import numpy as np
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
@@ -19,7 +19,7 @@ print(f"Experiment ID: {experiment.experiment_id}")
 print(f"Artifact Location: {experiment.artifact_location}")
 
 # Carregar e preparar os dados
-df = pd.read_csv("iris.csv")  # Substitua pelo caminho correto do dataset
+df = pd.read_csv("examples/iris.csv")  # Substitua pelo caminho correto do dataset
 X = df.drop(columns=["variety"])
 y = df["variety"]
 
@@ -67,15 +67,15 @@ with mlflow.start_run(run_name="iris_classification_run") as run:
     # Logar o modelo
     mlflow.sklearn.log_model(model, "random_forest_model")
 
-    os.makedirs("data_input", exist_ok=True)
+    os.makedirs("examples/data_input", exist_ok=True)
     # Logar o dataset, dados de treino e teste como artefatos
-    df.to_csv("data_input/input_dataset.csv", index=False)
+    df.to_csv("examples/data_input/input_dataset.csv", index=False)
     train = pd.concat([X_train, y_train], axis=1)
-    pd.DataFrame(train).to_csv("data_input/train_data.csv", index=False)
+    pd.DataFrame(train).to_csv("examples/data_input/train_data.csv", index=False)
     test = pd.concat([X_test, y_test], axis=1)
-    pd.DataFrame(test).to_csv("data_input/test_data.csv", index=False)
+    pd.DataFrame(test).to_csv("examples/data_input/test_data.csv", index=False)
     
-    mlflow.log_artifacts("data_input")
+    mlflow.log_artifacts("examples/data_input")
     
     # Logar um gráfico de importância das features
     feature_importance = model.feature_importances_
