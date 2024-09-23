@@ -42,12 +42,29 @@ services:
       - MINIO_PORT=${MINIO_PORT}
       - MINIO_STORAGE_USE_HTTPS=${MINIO_STORAGE_USE_HTTPS}
       - MINIO_CONSOLE_ADDRESS=:${MINIO_CONSOLE_ADDRESS}
+      - MLFLOW_BUCKET_NAME=${MLFLOW_BUCKET_NAME}
     command: server /data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
+
+  create-bucket:
+    image: minio/mc
+    depends_on:
+      - s3
+    volumes:
+      - ./create-bucket.sh:/usr/bin/create-bucket.sh
+    networks:
+      - backend
+    entrypoint: ["/bin/sh", "/usr/bin/create-bucket.sh"]
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_HOST=${MINIO_HOST}
+      - MINIO_PORT=${MINIO_PORT}
+      - MLFLOW_BUCKET_NAME=${MLFLOW_BUCKET_NAME}
 
 volumes:
   minio_data:
