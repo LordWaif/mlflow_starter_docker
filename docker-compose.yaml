@@ -1,4 +1,3 @@
-version: '3'
 services:
   mlflow:
     restart: always
@@ -10,6 +9,9 @@ services:
       - AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_ACCESS_KEY}
       - MLFLOW_S3_ENDPOINT_URL=http://${MINIO_HOST}:${MINIO_PORT}
       - MLFLOW_S3_IGNORE_TLS=true
+      - MLFLOW_ARTIFACT_MAX_FILE_SIZE=${MLFLOW_ARTIFACT_MAX_FILE_SIZE}
+      - MLFLOW_LOGGING_LEVEL=${MLFLOW_LOGGING_LEVEL}
+      - MLFLOW_HTTP_REQUEST_TIMEOUT=${MLFLOW_HTTP_REQUEST_TIMEOUT}
     networks:
       - backend
     command: >
@@ -18,6 +20,8 @@ services:
       --host 0.0.0.0
       --serve-artifacts
       --artifacts-destination s3://${MLFLOW_BUCKET_NAME}
+      --default-artifact-root s3://${MLFLOW_BUCKET_NAME}
+      --gunicorn-opts "--timeout 300 --workers 4"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${MLFLOW_PORT}/"]
       interval: 30s
